@@ -60,7 +60,8 @@ public class InitXlet implements Xlet {
         
         // Add sanity check
         if (System.getSecurityManager() == null) {
-            
+            Status.println("Starting Interal Jar Loading in 3 seconds...");
+            try { Thread.sleep(3000); } catch (Exception e) {}
             boolean UseInternalJar = true;
 
             if (!UseInternalJar) {

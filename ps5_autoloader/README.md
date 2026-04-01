@@ -8,11 +8,11 @@ It's the script file to define payloads to run automatically by Autoloader. Edit
 
 ### Example
 ```
-!1000
+!5000
 ftpsrv-ps5-1.15-ng-beta9.elf
 !1000
 kstuff-lite-1.1-dr-stable.elf
-!1000
+!3000
 shadowmountplus-1.6test7-fix2.elf
 ```
 
