@@ -12,7 +12,11 @@ It supports on-screen logging~~ and network logging~~.
 Send bdj_unpatch.elf to elfldr to unpatch BD-J.  
 bdj_unpatch.elf will backup existing bdjstack.jar to bdjstack.jar.bak just in case.  
 
+<<<<<<< HEAD
 Then burn BD-UN-JB-Poops iso and run.  
+=======
+Then burn BD-UN-JB iso and run.  
+>>>>>>> fa595f3 (Update README)
 
 **DO NOT REINSTALL FW, IT WILL WIPE THE PATCH AND LOSE BD-JB**
 
