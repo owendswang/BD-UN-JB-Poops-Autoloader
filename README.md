@@ -12,11 +12,7 @@ It supports on-screen logging~~ and network logging~~.
 Send bdj_unpatch.elf to elfldr to unpatch BD-J.  
 bdj_unpatch.elf will backup existing bdjstack.jar to bdjstack.jar.bak just in case.  
 
-<<<<<<< HEAD
 Then burn BD-UN-JB-Poops iso and run.  
-=======
-Then burn BD-UN-JB iso and run.  
->>>>>>> fa595f3 (Update README)
 
 **DO NOT REINSTALL FW, IT WILL WIPE THE PATCH AND LOSE BD-JB**
 
@@ -26,9 +22,9 @@ RemoteLogger server is listening on port 18194.
 Use log_client.py to get the log.  
 I recommend first running the log_client.py then starting the BD-J app.  
 
-~~RemoteJarLoader server is listening on port 9025.  ~~
-~~Use jar_client.py to send the jar file.  ~~
-~~You can use any other TCP payload sender too.  ~~
+~~RemoteJarLoader server is listening on port 9025.~~  
+~~Use jar_client.py to send the jar file.~~  
+~~You can use any other TCP payload sender too.~~  
 ~~Don't forget to set Main-Class in manifest.txt.~~
 
 ---
