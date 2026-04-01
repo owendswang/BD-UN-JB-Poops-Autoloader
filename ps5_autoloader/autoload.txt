@@ -1,0 +1,5 @@
+ftpsrv-ps5-1.15-ng-beta9.elf
+!1000
+shadowmountplus-1.6test7-fix2.elf
+!1000
+kstuff-lite-1.1-dr-stable.elf

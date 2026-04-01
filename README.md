@@ -7,7 +7,7 @@ BD-UN-JB-Poops is [BD-UN-JB](https://github.com/Gezine/BD-UN-JB) chained with [P
 PS5_autoloader is not implemented yet. I'm working on it.
 
 It can only be used on already jailbroken PS5 upto 12.00 firmware.   
-It supports on-screen logging~~ and network logging~~.  
+It supports on-screen logging ~~and network logging~~.  
 
 Send bdj_unpatch.elf to elfldr to unpatch BD-J.  
 bdj_unpatch.elf will backup existing bdjstack.jar to bdjstack.jar.bak just in case.  
