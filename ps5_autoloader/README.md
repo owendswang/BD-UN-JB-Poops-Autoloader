@@ -8,9 +8,16 @@ It's the script file to define payloads to run automatically by Autoloader. Edit
 
 ### Example
 ```
+!1000
 ftpsrv-ps5-1.15-ng-beta9.elf
 !1000
 kstuff-lite-1.1-dr-stable.elf
 !1000
 shadowmountplus-1.6test7-fix2.elf
 ```
+
+## Credits
+**[drakmor](https://github.com/drakmor):**
+* [ftpsrv](https://github.com/drakmor/ftpsrv)
+* [kstuff](https://github.com/drakmor/kstuff-lite)
+* [shadowmountplus](https://github.com/drakmor/ShadowMountPlus)

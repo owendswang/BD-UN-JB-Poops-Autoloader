@@ -15,7 +15,7 @@
 # <http://www.gnu.org/licenses/>.
 
 
-DISC_LABEL := BD-UN-JB-Poops
+DISC_LABEL := BD-UN-JB-Poops-Autoloader
 
 #
 # Host tools

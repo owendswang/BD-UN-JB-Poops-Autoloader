@@ -1,10 +1,8 @@
-# BD-UN-JB-Poops
+# BD-UN-JB-Poops-Autoloader
 
 **Note : YOU NEED ALREADY JAILBROKEN PS5**
 
-BD-UN-JB-Poops is [BD-UN-JB](https://github.com/Gezine/BD-UN-JB) chained with [Poops-PS5-Java](https://github.com/jaigaresc/Poops-PS5-Java).
-
-PS5_autoloader is not implemented yet. I'm working on it.
+BD-UN-JB-Poops-Autoloader is [BD-UN-JB](https://github.com/Gezine/BD-UN-JB) chained with [Poops-PS5-Java](https://github.com/jaigaresc/Poops-PS5-Java) and [ps5_autoaload.elf](https://github.com/owendswang/Poops-PS5-Java-Autoloader/tree/main/ps5_autoload_elf).
 
 It can only be used on already jailbroken PS5 upto 12.00 firmware.   
 It supports on-screen logging ~~and network logging~~.  
@@ -12,15 +10,15 @@ It supports on-screen logging ~~and network logging~~.
 Send bdj_unpatch.elf to elfldr to unpatch BD-J.  
 bdj_unpatch.elf will backup existing bdjstack.jar to bdjstack.jar.bak just in case.  
 
-Then burn BD-UN-JB-Poops iso and run.  
+Then burn BD-UN-JB-Poops-Autoloader iso and run.  
 
-**DO NOT REINSTALL FW, IT WILL WIPE THE PATCH AND LOSE BD-JB**
+**DO NOT REINSTALL OR UPDATE FW, IT WILL WIPE THE PATCH AND LOSE BD-JB**
 
 ---
 
-RemoteLogger server is listening on port 18194.  
-Use log_client.py to get the log.  
-I recommend first running the log_client.py then starting the BD-J app.  
+~~RemoteLogger server is listening on port 18194.~~  
+~~Use log_client.py to get the log.~~  
+~~I recommend first running the log_client.py then starting the BD-J app.~~  
 
 ~~RemoteJarLoader server is listening on port 9025.~~  
 ~~Use jar_client.py to send the jar file.~~  
@@ -40,7 +38,10 @@ Use john-tornblom's **[bdj-sdk](https://github.com/john-tornblom/bdj-sdk/)** and
 * **[hammer-83](https://github.com/hammer-83)** — PS5 Remote JAR Loader reference.  
 * **[john-tornblom](https://github.com/john-tornblom)** — [BDJ-SDK](https://github.com/john-tornblom/bdj-sdk) and [ps5-payload-sdk](https://github.com/ps5-payload-dev/sdk/) used for compilation.  
 * **[kuba--](https://github.com/kuba--)** — [zip](https://github.com/kuba--/zip) used for bdj_unpatch elf payload.  
-* **[Poops-PS5-Java](https://github.com/jaigaresc/Poops-PS5-Java)** — used for jar payload.
+* **[jaigaresc](https://github.com/jaigaresc/Poops-PS5-Java)** — used for jar payload.
+* **[itsPLK](https://github.com/itsPLK/ps5_y2jb_autoloader):** Autoloader theory.
+* **[BenNoxXD](https://github.com/BenNoxXD/PS5-BDJ-HEN-loader):** Method to close disc player.
+* **[drakmor](https://github.com/drakmor):** [ftpsrv](https://github.com/drakmor/ftpsrv), [kstuff](https://github.com/drakmor/kstuff-lite), [shadowmountplus](https://github.com/drakmor/ShadowMountPlus).
 
 ---
 
