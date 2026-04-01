@@ -1,0 +1,3 @@
+[submodule "payloads/Poops-PS5-Java"]
+	path = payloads/Poops-PS5-Java
+	url = https://github.com/jaigaresc/Poops-PS5-Java.git

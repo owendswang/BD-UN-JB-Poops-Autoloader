@@ -27,7 +27,7 @@ public class InitXlet implements Xlet {
         
         Status.println("BD-J init");
         Status.setScreenOutputEnabled(true);
-        Status.setNetworkLoggerEnabled(false);
+        Status.setNetworkLoggerEnabled(true);
 
         screen = Screen.getInstance();
         screen.setSize(1920, 1080);
@@ -61,7 +61,7 @@ public class InitXlet implements Xlet {
         // Add sanity check
         if (System.getSecurityManager() == null) {
             
-            boolean UseInternalJar = false;
+            boolean UseInternalJar = true;
 
             if (!UseInternalJar) {
                 try {
