@@ -33,7 +33,7 @@ Use john-tornblom's **[bdj-sdk](https://github.com/john-tornblom/bdj-sdk/)** and
 
 ### Credits
 
-* **[BD-UN-JB](https://github.com/Gezine/BD-UN-JB)** — BD-UN-JB for basics.  
+* **[Gezine](https://github.com/Gezine/BD-UN-JB)** — BD-UN-JB for basics.  
 * **[TheFlow](https://github.com/theofficialflow)** — BD-JB documentation & native code execution sources.  
 * **[hammer-83](https://github.com/hammer-83)** — PS5 Remote JAR Loader reference.  
 * **[john-tornblom](https://github.com/john-tornblom)** — [BDJ-SDK](https://github.com/john-tornblom/bdj-sdk) and [ps5-payload-sdk](https://github.com/ps5-payload-dev/sdk/) used for compilation.  
