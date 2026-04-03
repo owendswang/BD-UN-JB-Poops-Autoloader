@@ -9,15 +9,21 @@ It's the script file to define payloads to run automatically by Autoloader. Edit
 ### Example
 ```
 !5000
-ftpsrv-ps5-1.15-ng-beta9.elf
+ftpsrv-ps5-0.18.3.elf
 !1000
-kstuff-lite-1.1-dr-stable.elf
-!3000
 shadowmountplus-1.6test7-fix2.elf
+!3000
+kstuff-lite-1.02.elf
 ```
 
 ## Credits
 **[drakmor](https://github.com/drakmor):**
 * [ftpsrv](https://github.com/drakmor/ftpsrv)
-* [kstuff](https://github.com/drakmor/kstuff-lite)
+* [kstuff-lite](https://github.com/drakmor/kstuff-lite)
 * [shadowmountplus](https://github.com/drakmor/ShadowMountPlus)
+
+**[EchoStretch](https://github.com/EchoStretch):**
+* [kstuff-lite](https://github.com/EchoStretch/kstuff-lite)
+
+**[John Törnblom ](https://github.com/john-tornblom):**
+* [ftpsrv](https://github.com/ps5-payload-dev/ftpsrv)

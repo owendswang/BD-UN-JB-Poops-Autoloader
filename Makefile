@@ -58,7 +58,7 @@ discdir:
 discdir/BDMV/JAR/00000.jar: discdir $(SOURCES)
 	$(JAVAC) $(JFLAGS) -cp $(CLASSPATH) $(SOURCES)
 	mkdir -p build
-	rsync -a --exclude='*.java' --exclude='*.c' src/ build/
+	rsync -a --exclude='*.java' --exclude='*.c' --exclude='*.bak' src/ build/
 	$(JAR) cf $@ -C build/ .
 
 discdir/%: discdir
