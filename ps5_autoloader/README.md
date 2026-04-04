@@ -13,7 +13,7 @@ ftpsrv-ps5-0.18.3.elf
 !1000
 shadowmountplus-1.6test7-fix2.elf
 !3000
-kstuff-lite-1.02.elf
+kstuff-lite-1.03.elf
 ```
 
 ## Credits
