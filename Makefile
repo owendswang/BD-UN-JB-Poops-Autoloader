@@ -35,7 +35,7 @@ export JAVA8_HOME
 # Compilation artifacts
 #
 CLASSPATH     := $(BDJSDK_HOME)/target/lib/enhanced-stubs.zip:$(BDJSDK_HOME)/target/lib/bdjstack.jar:$(BDJSDK_HOME)/target/lib/pbp.jar
-SOURCES       := $(wildcard src/jdk/internal/misc/*.java) $(wildcard src/org/bdj/*.java) $(wildcard src/org/bdj/sandbox/*.java) $(wildcard src/org/bdj/api/*.java)
+SOURCES       := $(wildcard src/jdk/internal/misc/*.java) $(wildcard src/org/bdj/*.java) $(wildcard src/org/bdj/sandbox/*.java) $(wildcard src/org/bdj/api/*.java) $(wildcard src/org/homebrew/*.java)
 JFLAGS        := -Xlint:-options -source 1.4 -target 1.4
 
 #
@@ -58,7 +58,10 @@ discdir:
 discdir/BDMV/JAR/00000.jar: discdir $(SOURCES)
 	$(JAVAC) $(JFLAGS) -cp $(CLASSPATH) $(SOURCES)
 	mkdir -p build
+	rsync -a bin/ build/
 	rsync -a --exclude='*.java' --exclude='*.c' --exclude='*.bak' src/ build/
+	rsync -a ps5_autoload_elf/ps5_autoload.elf build/ps5_autoload.elf
+	rsync -a ps5_killdiscplayer_elf/ps5_killdiscplayer.elf build/ps5_killdiscplayer.elf
 	$(JAR) cf $@ -C build/ .
 
 discdir/%: discdir
@@ -68,10 +71,9 @@ discdir/%: discdir
 $(DISC_LABEL).iso: $(DISC_FILES)
 	cp -r BDMV/META discdir/BDMV/
 	cp -r BDMV/BDJO discdir/BDMV/
-	cp payloads/Poops-PS5-Java/payload.jar discdir/
 	cp -r ps5_autoloader discdir/
 	$(MAKEFS) -m 16m -t udf -o T=bdre,v=2.50,L=$(DISC_LABEL) $@ discdir
 
 clean:
-	rm -rf build META-INF $(DISC_LABEL).iso discdir src/jdk/internal/misc/*.class src/org/bdj/*.class src/org/bdj/sandbox/*.class src/org/bdj/api/*.class 
+	rm -rf build META-INF $(DISC_LABEL).iso discdir src/jdk/internal/misc/*.class src/org/bdj/*.class src/org/bdj/sandbox/*.class src/org/bdj/api/*.class src/org/homebrew/*.class 
     

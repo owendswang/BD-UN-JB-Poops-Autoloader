@@ -11,7 +11,7 @@ It's the script file to define payloads to run automatically by Autoloader. Edit
 !5000
 ftpsrv-ps5-0.18.3.elf
 !1000
-shadowmountplus-1.6test7-fix2.elf
+shadowmountplus-1.6test8-fix1.elf
 !3000
 kstuff-lite-1.03.elf
 ```
@@ -25,5 +25,5 @@ kstuff-lite-1.03.elf
 **[EchoStretch](https://github.com/EchoStretch):**
 * [kstuff-lite](https://github.com/EchoStretch/kstuff-lite)
 
-**[John Törnblom ](https://github.com/john-tornblom):**
+**[John Törnblom](https://github.com/john-tornblom):**
 * [ftpsrv](https://github.com/ps5-payload-dev/ftpsrv)

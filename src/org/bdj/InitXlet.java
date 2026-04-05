@@ -14,14 +14,11 @@ import org.havi.ui.HSceneFactory;
 import org.bdj.sandbox.Exploit;
 import org.bdj.sandbox.ExploitInternal;
 
+import org.homebrew.Poops;
+
 public class InitXlet implements Xlet {
     private HScene scene;
     private Screen screen;
-    private RemoteJarLoader jarLoader;
-    private Thread jarLoaderThread;
-    private InternalJarLoader internalJarLoader;
-    private Thread internalJarLoaderThread;
-    private final String jarLoaderThreadName = "JarLoader";
     
     public void initXlet(XletContext context) {
         
@@ -60,28 +57,10 @@ public class InitXlet implements Xlet {
         
         // Add sanity check
         if (System.getSecurityManager() == null) {
-            Status.println("Starting Interal Jar Loading in 3 seconds...");
+            Status.println("Starting Poopsloit in 3 seconds...");
             try { Thread.sleep(3000); } catch (Exception e) {}
-            boolean UseInternalJar = true;
 
-            if (!UseInternalJar) {
-                try {
-                    jarLoader = new RemoteJarLoader();
-                    jarLoaderThread = new Thread(jarLoader, jarLoaderThreadName);
-                    jarLoaderThread.start();
-                } catch (Throwable e) {
-                    Status.printStackTrace("Loader startup failed", e);
-                }
-            } else {
-                try {
-                    internalJarLoader = new InternalJarLoader();
-                    internalJarLoaderThread = new Thread(internalJarLoader, jarLoaderThreadName);
-                    internalJarLoaderThread.start();
-                } catch (Throwable e) {
-                    Status.printStackTrace("Loader startup failed", e);
-                }
-            }
-            
+            Poops.main(new String[]{});
         } else {
             Status.println("Sandbox is still activated");
         }
