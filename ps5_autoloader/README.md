@@ -16,6 +16,10 @@ shadowmountplus-1.6test8-fix1.elf
 kstuff-lite-1.03.elf
 ```
 
+## 'ps5_autoloader_update.zip' file
+It's able to update `/data/ps5_autoloader` directory with it.  
+Wrap anything into `ps5_autoloader_update.zip` and put it into a USB storage device formatted as FAT32 or EXFAT. Plug it to PS5 before you run the BD disc. Everything inside `ps5_autoloader_update.zip` would be extracted to `/data/ps5_autoloader` before the autoloader process.
+
 ## Credits
 **[drakmor](https://github.com/drakmor):**
 * [ftpsrv](https://github.com/drakmor/ftpsrv)

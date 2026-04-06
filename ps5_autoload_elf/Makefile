@@ -6,15 +6,15 @@ else
     $(error PS5_PAYLOAD_SDK is undefined)
 endif
 
-CFLAGS  := -Wall -Os
+CFLAGS  := -Wall -Os -DZIP_HAVE_SYMLINK=0
 LDFLAGS := -lkernel -lc
 
 TARGET := ps5_autoload.elf
 
 all: $(TARGET)
 
-$(TARGET): main.c
-	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+$(TARGET): main.c zip.c
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	@echo "Built $@ ($$(stat -c%s $@) bytes)"
 
 clean:
