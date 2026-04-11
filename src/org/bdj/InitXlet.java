@@ -21,10 +21,9 @@ public class InitXlet implements Xlet {
     private Screen screen;
     
     public void initXlet(XletContext context) {
-        
-        Status.println("BD-J init");
         Status.setScreenOutputEnabled(true);
         Status.setNetworkLoggerEnabled(true);
+        Status.println("BD-J init");
 
         screen = Screen.getInstance();
         screen.setSize(1920, 1080);
@@ -60,7 +59,11 @@ public class InitXlet implements Xlet {
             Status.println("Starting Poopsloit in 3 seconds...");
             try { Thread.sleep(3000); } catch (Exception e) {}
 
-            Poops.main(new String[]{});
+            try {
+                Poops.main(new String[]{});
+            } catch (Exception e) {
+                Status.printStackTrace("Error while executing Poopsloit: ", e);
+            }
         } else {
             Status.println("Sandbox is still activated");
         }
@@ -104,6 +107,5 @@ public class InitXlet implements Xlet {
     }
     
 }
-
 
 

@@ -16,18 +16,20 @@ public class RemoteLogger {
     private static final int HEARTBEAT_INTERVAL = 1000;
     private static final int HEARTBEAT_TIMEOUT = 3000;
     private Thread heartbeatThread;
+    private Throwable startupError;
 
     public RemoteLogger(int port, int maxCached) {
         this.port = port;
         this.maxCached = maxCached;
     }
 
-    public synchronized void start() {
-        if (running) return;
+    public synchronized boolean start() {
+        if (running) return true;
         
         try {
             socket = new DatagramSocket(port);
             running = true;
+            startupError = null;
             
             Thread listener = new Thread(new Runnable() {
                 public void run() {
@@ -44,10 +46,25 @@ public class RemoteLogger {
             });
             heartbeatThread.setDaemon(true);
             heartbeatThread.start();
+            return true;
             
         } catch (Exception e) {
-
+            startupError = e;
+            running = false;
+            if (socket != null) {
+                socket.close();
+                socket = null;
+            }
+            return false;
         }
+    }
+
+    public synchronized boolean isRunning() {
+        return running && socket != null && !socket.isClosed();
+    }
+
+    public synchronized Throwable getStartupError() {
+        return startupError;
     }
 
     public synchronized void stop() {
