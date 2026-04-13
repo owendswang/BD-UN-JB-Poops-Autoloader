@@ -1,8 +1,8 @@
-# BD-UN-JB-Poops-Autoloader
+# BD-UN-JB-NetCtrl-Autoloader
 
 **Note : YOU NEED ALREADY JAILBROKEN PS5**
 
-BD-UN-JB-Poops-Autoloader is [BD-UN-JB](https://github.com/Gezine/BD-UN-JB) chained with [Poops-PS5-Java](https://github.com/jaigaresc/Poops-PS5-Java) and [ps5_autoaload.elf](https://github.com/owendswang/Poops-PS5-Java-Autoloader/tree/main/ps5_autoload_elf).
+BD-UN-JB-NetCtrl-Autoloader is [BD-UN-JB](https://github.com/Gezine/BD-UN-JB) chained with [ExploitNetControlImpl.java](https://gist.github.com/TheOfficialFloW/7174351201b5260d7780780f4059bebf)/[Poops-PS5-Java](https://github.com/jaigaresc/Poops-PS5-Java) and [ps5_autoaload.elf](https://github.com/owendswang/Poops-PS5-Java-Autoloader/tree/main/ps5_autoload_elf).
 
 It can only be used on already jailbroken PS5 upto 12.00 firmware.   
 It supports on-screen logging ~~and network logging~~.  
@@ -10,7 +10,7 @@ It supports on-screen logging ~~and network logging~~.
 Send bdj_unpatch.elf to elfldr to unpatch BD-J.  
 bdj_unpatch.elf will backup existing bdjstack.jar to bdjstack.jar.bak just in case.  
 
-Then burn BD-UN-JB-Poops-Autoloader iso and run.  
+Then burn BD-UN-JB-NetCtrl-Autoloader iso and run.  
 
 **DO NOT REINSTALL OR UPDATE FW, IT WILL WIPE THE PATCH AND LOSE BD-JB**
 
@@ -34,7 +34,7 @@ Use john-tornblom's **[bdj-sdk](https://github.com/john-tornblom/bdj-sdk/)** and
 ### Credits
 
 * **[Gezine](https://github.com/Gezine/BD-UN-JB)** — BD-UN-JB for basics.  
-* **[TheFlow](https://github.com/theofficialflow)** — BD-JB documentation & native code execution sources.  
+* **[TheFlow](https://github.com/theofficialflow)** — BD-JB documentation & native code execution sources & original NetCtrol exploit code.  
 * **[hammer-83](https://github.com/hammer-83)** — PS5 Remote JAR Loader reference.  
 * **[john-tornblom](https://github.com/john-tornblom)** — [BDJ-SDK](https://github.com/john-tornblom/bdj-sdk) and [ps5-payload-sdk](https://github.com/ps5-payload-dev/sdk/) used for compilation.  
 * **[kuba--](https://github.com/kuba--)** — [zip](https://github.com/kuba--/zip) used for bdj_unpatch and ps5_autoload elf payload.  

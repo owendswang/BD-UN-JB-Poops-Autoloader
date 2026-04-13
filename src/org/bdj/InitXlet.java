@@ -14,7 +14,9 @@ import org.havi.ui.HSceneFactory;
 import org.bdj.sandbox.Exploit;
 import org.bdj.sandbox.ExploitInternal;
 
-import org.homebrew.Poops;
+import org.bdj.external.ExploitNetControlImpl;
+
+import org.bdj.api.NativeInvoke;
 
 public class InitXlet implements Xlet {
     private HScene scene;
@@ -60,9 +62,11 @@ public class InitXlet implements Xlet {
             try { Thread.sleep(3000); } catch (Exception e) {}
 
             try {
-                Poops.main(new String[]{});
+                ExploitNetControlImpl.main(new String[]{});
             } catch (Exception e) {
                 Status.printStackTrace("Error while executing Poopsloit: ", e);
+                Status.println("NetCtrl Failed! Reboot and try again");
+                NativeInvoke.sendNotificationRequest("NetCtrl Failed!\nReboot and try again");
             }
         } else {
             Status.println("Sandbox is still activated");
