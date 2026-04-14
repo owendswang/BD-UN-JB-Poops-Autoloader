@@ -33,11 +33,12 @@ Use john-tornblom's **[bdj-sdk](https://github.com/john-tornblom/bdj-sdk/)** and
 
 ### Credits
 
-* **[Gezine](https://github.com/Gezine/BD-UN-JB)** — BD-UN-JB for basics.  
-* **[TheFlow](https://github.com/theofficialflow)** — BD-JB documentation & native code execution sources & original NetCtrol exploit code.  
-* **[hammer-83](https://github.com/hammer-83)** — PS5 Remote JAR Loader reference.  
-* **[john-tornblom](https://github.com/john-tornblom)** — [BDJ-SDK](https://github.com/john-tornblom/bdj-sdk) and [ps5-payload-sdk](https://github.com/ps5-payload-dev/sdk/) used for compilation.  
-* **[kuba--](https://github.com/kuba--)** — [zip](https://github.com/kuba--/zip) used for bdj_unpatch and ps5_autoload elf payload.  
+* **[Gezine](https://github.com/Gezine/BD-UN-JB)** — BD-UN-JB for basics.
+* **[TheFlow](https://github.com/theofficialflow)** — BD-JB documentation & native code execution sources & original NetCtrol exploit code.
+* **[MassZero0](https://github.com/MassZero0)** — Reimplementation TheFloW's NetCtrol exploit code to John Tornblom's BDJ-SDK and chained it with debug patching and elfldr. He nailed this before me. [NetPoops-PS5](https://github.com/MassZero0/NetPoops-PS5)
+* **[hammer-83](https://github.com/hammer-83)** — PS5 Remote JAR Loader reference.
+* **[john-tornblom](https://github.com/john-tornblom)** — [BDJ-SDK](https://github.com/john-tornblom/bdj-sdk) and [ps5-payload-sdk](https://github.com/ps5-payload-dev/sdk/) used for compilation.
+* **[kuba--](https://github.com/kuba--)** — [zip](https://github.com/kuba--/zip) used for bdj_unpatch and ps5_autoload elf payload.
 * **[jaigaresc](https://github.com/jaigaresc/Poops-PS5-Java)** — used for jar payload.
 * **[itsPLK](https://github.com/itsPLK/ps5_y2jb_autoloader):** Autoloader theory.
 * **[BenNoxXD](https://github.com/BenNoxXD/PS5-BDJ-HEN-loader):** Method to close disc player.

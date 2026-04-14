@@ -9,7 +9,7 @@ It's the script file to define payloads to run automatically by Autoloader. Edit
 ### Example
 ```
 !5000
-ftpsrv-ps5-0.18.3.elf
+ftpsrv-ps5-0.19.elf
 !1000
 shadowmountplus-1.6test8-fix1.elf
 !3000

@@ -26,6 +26,14 @@ public class ElfLoader {
     private static final long MAPPING_ADDR = 0x926100000L;
     private static final long SHADOW_MAPPING_ADDR = 0x920100000L;
 
+    private static final int PROT_READ = 0x1;
+    private static final int PROT_WRITE = 0x2;
+    private static final int PROT_EXEC = 0x4;
+    private static final int MAP_SHARED = 0x01;
+    private static final int MAP_ANONYMOUS = 0x20;
+    private static final int O_CREAT = 0x0400;
+    private static final int O_RDWR = 0x02;
+
     private static final int AF_INET6 = 28;
     private static final int IPPROTO_IPV6 = 41;
 
@@ -42,6 +50,8 @@ public class ElfLoader {
     private static final String PTHREAD_ATTR_SET_STACK_SIZE_SYMBOL = "scePthreadAttrSetstacksize";
     private static final String PTHREAD_ATTR_SET_DETACH_STATE_SYMBOL = "scePthreadAttrSetdetachstate";
     private static final String PTHREAD_ATTR_DESTROY_SYMBOL = "scePthreadAttrDestroy";
+    // private static final String SHM_OPEN_SYMBOL = "shm_open";
+    // private static final String FTRUNCATE_SYMBOL = "ftruncate";
 
     private static final int FILEDESCENT_SIZE = 0x30;
     private static final int INPCB_PKTOPTS = 0x120;
@@ -67,6 +77,8 @@ public class ElfLoader {
     private static long scePthreadAttrSetstacksize;
     private static long scePthreadAttrSetdetachstate;
     private static long scePthreadAttrDestroy;
+    // private static long shm_open;
+    // private static long ftruncate;
 
     private static void checkSymbol(long address, String name) {
         if (address == 0) {
@@ -89,6 +101,8 @@ public class ElfLoader {
         scePthreadAttrSetstacksize = ExploitNetControlImpl.api.dlsym(API.LIBKERNEL_MODULE_HANDLE, PTHREAD_ATTR_SET_STACK_SIZE_SYMBOL);
         scePthreadAttrSetdetachstate = ExploitNetControlImpl.api.dlsym(API.LIBKERNEL_MODULE_HANDLE, PTHREAD_ATTR_SET_DETACH_STATE_SYMBOL);
         scePthreadAttrDestroy = ExploitNetControlImpl.api.dlsym(API.LIBKERNEL_MODULE_HANDLE, PTHREAD_ATTR_DESTROY_SYMBOL);
+        // shm_open = ExploitNetControlImpl.api.dlsym(API.LIBKERNEL_MODULE_HANDLE, SHM_OPEN_SYMBOL);
+        // ftruncate = ExploitNetControlImpl.api.dlsym(API.LIBKERNEL_MODULE_HANDLE, FTRUNCATE_SYMBOL);
 
         checkSymbol(jitshm_create, "jitshm_create");
         checkSymbol(jitshm_alias, "jitshm_alias");
@@ -103,6 +117,8 @@ public class ElfLoader {
         checkSymbol(scePthreadAttrSetstacksize, "scePthreadAttrSetstacksize");
         // checkSymbol(scePthreadAttrSetdetachstate, "scePthreadAttrSetdetachstate");
         checkSymbol(scePthreadAttrDestroy, "scePthreadAttrDestroy");
+        // checkSymbol(shm_open, "shm_open");
+        // checkSymbol(ftruncate, "ftruncate");
     }
 
     private static int jitshm_create(long a, long b, long c, long d) {
@@ -113,8 +129,8 @@ public class ElfLoader {
         return (int) ExploitNetControlImpl.api.call(jitshm_alias, a, b, c);
     }
 
-    private static int mmap(long a, long b, long c, long d, long e, long f) {
-        return (int) ExploitNetControlImpl.api.call(mmap, a, b, c, d, e, f);
+    private static long mmap(long a, long b, long c, long d, long e, long f) {
+        return (long) ExploitNetControlImpl.api.call(mmap, a, b, c, d, e, f);
     }
 
     private static int pipe(long a) {
@@ -156,7 +172,15 @@ public class ElfLoader {
     private static int scePthreadAttrDestroy(long a) {
         return (int) ExploitNetControlImpl.api.call(scePthreadAttrDestroy, a);
     }
+/*
+    private static int shm_open(long a, int b, int c) {
+        return (int) ExploitNetControlImpl.api.call(shm_open, a, b, c);
+    }
 
+    private static int ftruncate(long a, long b) {
+        return (int) ExploitNetControlImpl.api.call(ftruncate, a, b);
+    }
+*/
     public static Buffer loadElfFromJar(String resourcePath) {
         try {
             java.io.InputStream is = ElfLoader.class.getResourceAsStream(resourcePath);
@@ -198,9 +222,9 @@ public class ElfLoader {
 
             if (p_type == 1) { // PT_LOAD
                 long aligned = (p_memsz + 0x3FFF) & 0xFFFFC000L;
-                if ((p_flags & 1) == 1) {
-                    exec_start = p_vaddr;
-                    exec_end = p_vaddr + p_memsz;
+            if ((p_flags & 1) == 1) {
+                exec_start = p_vaddr;
+                exec_end = p_vaddr + p_memsz;
 
                     Buffer fdBuf = new Buffer(8);
 
@@ -261,6 +285,7 @@ public class ElfLoader {
                 }
             }
         }
+    
         return MAPPING_ADDR + e_entry;
     }
 
@@ -406,19 +431,19 @@ public class ElfLoader {
             return;
         }
 
-        Status.println("[*] Launching native thread...");
+        // Status.println("[*] Launching native thread...", false);
         long ret = scePthreadCreate(th.address(), at.address(), entry, args.address(), threadName.address());
 
         scePthreadAttrDestroy(at.address());
         if (ret == 0) {
-            Status.println("[+] Thread spawned. Waiting for bootstrap to complete...", false);
+            // Status.println("[+] Thread spawned. Waiting for bootstrap to complete...", false);
             if (!ExploitNetControlImpl.verifySleepHealth(4000)) {
                 NativeInvoke.sendNotificationRequest("Unstable!\nReboot and try again");
                 Status.println("[!] Unstable! Reboot and try again");
                 sched_yield();
                 throw new Error("Unstable! Reboot and try again");
             }
-            Status.println("[+] ELF Loader ready! Port 9021 Open.", false);
+            Status.println("[+] ELF Loader ready! Port 9021 Open.");
         } else {
             Status.println("[!] scePthreadCreate failed: " + String.valueOf(ret));
         }
@@ -436,7 +461,7 @@ public class ElfLoader {
                 return false;
             }
 
-            Status.println("[*] Sending ps5_autoload.elf to 127.0.0.1:9021...", false);
+            // Status.println("[*] Sending ps5_autoload.elf to 127.0.0.1:9021...", false);
             elfldrSocket = new Socket();
             elfldrSocket.connect(new InetSocketAddress("127.0.0.1", 9021), 500);
             socketOutput = elfldrSocket.getOutputStream();
@@ -447,7 +472,7 @@ public class ElfLoader {
                 socketOutput.write(buffer, 0, bytesRead);
             }
             socketOutput.flush();
-            Status.println("[+] ps5_autoload.elf sent to 127.0.0.1:9021.", false);
+            // Status.println("[+] ps5_autoload.elf sent to 127.0.0.1:9021.", false);
             return true;
         } catch (IOException e) {
             Status.printStackTrace("[!] Failed to send ps5_autoload.elf", e);

@@ -13,9 +13,7 @@ import org.havi.ui.HSceneFactory;
 
 import org.bdj.sandbox.Exploit;
 import org.bdj.sandbox.ExploitInternal;
-
 import org.bdj.external.ExploitNetControlImpl;
-
 import org.bdj.api.NativeInvoke;
 
 public class InitXlet implements Xlet {
@@ -24,7 +22,6 @@ public class InitXlet implements Xlet {
     
     public void initXlet(XletContext context) {
         Status.setScreenOutputEnabled(true);
-        Status.setNetworkLoggerEnabled(true);
         Status.println("BD-J init");
 
         screen = Screen.getInstance();
@@ -47,19 +44,16 @@ public class InitXlet implements Xlet {
             if (!Exploit.disableSecurityManager()) {
                 ExploitInternal.disableSecurityManager();
             }
-
-            Status.println(System.getSecurityManager() == null
-                ? "Exploit success - sandbox escape achieved"
-                : "Exploit failed - sandbox still active");
-
         } catch (Exception e) {
             Status.printStackTrace("Error when disabling sandbox: ", e);
         }
         
         // Add sanity check
         if (System.getSecurityManager() == null) {
-            Status.println("Starting Poopsloit in 3 seconds...");
-            try { Thread.sleep(3000); } catch (Exception e) {}
+            // Status.setNetworkLoggerEnabled(true);
+            Status.println("Exploit success - sandbox escape achieved");
+            Status.println("Starting Poopsloit in 1 seconds...");
+            try { Thread.sleep(1000); } catch (Exception e) {}
 
             try {
                 ExploitNetControlImpl.main(new String[]{});
@@ -69,7 +63,7 @@ public class InitXlet implements Xlet {
                 NativeInvoke.sendNotificationRequest("NetCtrl Failed!\nReboot and try again");
             }
         } else {
-            Status.println("Sandbox is still activated");
+            Status.println("Exploit failed - sandbox still active");
         }
         
     }
