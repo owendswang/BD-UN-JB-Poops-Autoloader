@@ -182,7 +182,7 @@ static bool send_file_to_loader(const char *path, int port) {
     close(sockfd);
     free(data);
 
-    notify("Sent %zu bytes to loader", sent_total);
+    // notify("Sent %zu bytes to loader", sent_total);
     return true;
 }
 
@@ -345,7 +345,7 @@ int main(void) {
 
     if (find_update_zip(update_zip_path, sizeof(update_zip_path))) {
         // notify("Updating 'ps5_autoloader' from %s", update_zip_path);
-        notify("Updating 'ps5_autoloader' USB");
+        notify("Updating 'ps5_autoloader' from USB");
         
         if (ensure_dir(DATA_DIR) == 0) {
             int ret = zip_extract(update_zip_path, DATA_DIR, NULL, NULL);

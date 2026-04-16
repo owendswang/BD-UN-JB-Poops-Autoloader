@@ -2,6 +2,10 @@
 
 Put payloads in it. Then put this folder to `/mnt/USB?/` or `/data/`. Or implement it into BD disc root path. It could read `/mnt/disc/ps5_autoloader` too.
 
+### Priority
+
+`/mnt/USB?/ps5_autoloader` -> `/data/ps5_autoloader` -> `/mnt/disc/ps5_autoloader`
+
 ## 'autoload.txt' file
 
 It's the script file to define payloads to run automatically by Autoloader. Edit this file according to the example in it.
@@ -31,3 +35,7 @@ Wrap anything into `ps5_autoloader_update.zip` and put it into a USB storage dev
 
 **[John Törnblom](https://github.com/john-tornblom):**
 * [ftpsrv](https://github.com/ps5-payload-dev/ftpsrv)
+
+**[itsPLK](https://github.com/itsPLK):**
+* [itsPLK/ps5_y2jb_autoloader](https://github.com/itsPLK/ps5_y2jb_autoloader)
+* [itsPLK/ps5_lua_autoloader](https://github.com/itsPLK/ps5_lua_autoloader)

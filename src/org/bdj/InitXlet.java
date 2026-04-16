@@ -13,12 +13,14 @@ import org.havi.ui.HSceneFactory;
 
 import org.bdj.sandbox.Exploit;
 import org.bdj.sandbox.ExploitInternal;
-import org.bdj.external.ExploitNetControlImpl;
 import org.bdj.api.NativeInvoke;
 
 public class InitXlet implements Xlet {
     private HScene scene;
     private Screen screen;
+    private InternalJarLoader internalJarLoader;
+    private Thread internalJarLoaderThread;
+    private final String jarLoaderThreadName = "JarLoader";
     
     public void initXlet(XletContext context) {
         Status.setScreenOutputEnabled(true);
@@ -52,15 +54,15 @@ public class InitXlet implements Xlet {
         if (System.getSecurityManager() == null) {
             // Status.setNetworkLoggerEnabled(true);
             Status.println("Exploit success - sandbox escape achieved");
-            Status.println("Starting Poopsloit in 1 seconds...");
-            try { Thread.sleep(1000); } catch (Exception e) {}
+            Status.println("Starting Poopsloit in 3 seconds...");
+            try { Thread.sleep(3000); } catch (Exception e) {}
 
             try {
-                ExploitNetControlImpl.main(new String[]{});
-            } catch (Exception e) {
-                Status.printStackTrace("Error while executing Poopsloit: ", e);
-                Status.println("NetCtrl Failed! Reboot and try again");
-                NativeInvoke.sendNotificationRequest("NetCtrl Failed!\nReboot and try again");
+                internalJarLoader = new InternalJarLoader();
+                internalJarLoaderThread = new Thread(internalJarLoader, jarLoaderThreadName);
+                internalJarLoaderThread.start();
+            } catch (Throwable e) {
+                Status.printStackTrace("Loader startup failed", e);
             }
         } else {
             Status.println("Exploit failed - sandbox still active");

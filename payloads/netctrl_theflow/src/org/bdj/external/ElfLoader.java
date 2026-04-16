@@ -423,7 +423,7 @@ public class ElfLoader {
         threadName = new Buffer(8);
         threadName.put(0, "elfldr\0".getBytes());
 
-        Status.println("[*] Mapping ELF into JIT memory...");
+        // Status.println("[*] Mapping ELF into JIT memory...");
         long entry = mapElf(store);
 
         if (entry == 0) {
