@@ -59,7 +59,6 @@ public class PS5_KernelOffset {
         if (KernelOffsets.containsKey(FW_VERSION)) {
             offsets = (Hashtable) KernelOffsets.get(FW_VERSION);
         } else {
-<<<<<<< HEAD
             int major = 0;
             int minor = 0;
 
@@ -90,10 +89,6 @@ public class PS5_KernelOffset {
             else if (major == 12) targetFw = "12.00";
 
             offsets = (Hashtable) KernelOffsets.get(targetFw);
-=======
-            String major = FW_VERSION.indexOf('.') != -1 ? FW_VERSION.substring(0, FW_VERSION.indexOf('.')) : FW_VERSION;
-            offsets = (Hashtable) KernelOffsets.get(major + ".00");
->>>>>>> upstream/main
         }
     
         if (offsets == null) {
