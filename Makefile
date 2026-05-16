@@ -15,7 +15,7 @@
 # <http://www.gnu.org/licenses/>.
 
 
-DISC_LABEL := BD-UN-JB-NetCtrl-Autoloader
+DISC_LABEL := BD-UN-JB-NetCtrl-Autoloader-Gezine
 
 #
 # Host tools

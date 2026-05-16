@@ -22,6 +22,7 @@ $(JAR_NAME): $(SOURCES) manifest.txt
 	mkdir -p build
 	rsync -a --exclude='*.java' --exclude='*.bak' src/ $(MAKEFILE_DIR)/build/
 	rsync -a $(MAKEFILE_DIR)/../../ps5_autoload_elf/ps5_autoload.elf $(MAKEFILE_DIR)/build/org/bdj/external/ps5_autoload.elf
+	rsync -a $(MAKEFILE_DIR)/../../ps5_killdiscplayer_elf/ps5_killdiscplayer.elf $(MAKEFILE_DIR)/build/org/bdj/external/ps5_killdiscplayer.elf
 	$(JAR) cfm $@ manifest.txt -C $(MAKEFILE_DIR)/build/ .
 	cp -f $(JAR_NAME) $(MAKEFILE_DIR)/../../payload.jar
 

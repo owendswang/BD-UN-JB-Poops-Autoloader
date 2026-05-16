@@ -17,7 +17,7 @@ import java.net.Socket;
 
 public class Poops {
     
-    private static final String VERSION_STRING = "BD-J Poopsploit 1.3";
+    private static final String VERSION_STRING = "BD-J Poopsploit 1.4";
     
     private static final int KERNEL_PID = 0;
     
@@ -311,7 +311,7 @@ public class Poops {
             
         } else if (PLATFORM.equals("PS5")) {
             
-            if (compareVersions(FW_VERSION, "4.00") < 0 || compareVersions(FW_VERSION, "12.00") > 0) {
+            if (compareVersions(FW_VERSION, "6.00") < 0 || compareVersions(FW_VERSION, "12.00") > 0) {
                 NativeInvoke.sendNotificationRequest("UNSUPPORTED FW_VERSION");
                 Status.println("UNSUPPORTED FW_VERSION");
                 return false;
@@ -430,12 +430,17 @@ public class Poops {
         return api.call(__sys_randomized_path, fd, pathBuf.address(), lenPtr.address());
     }
 
-    private static int kill_bdj() {
+    private static void kill_bdj() {
+        Status.println("Trying to close disc player");
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) { }
         
-        return (int) api.call(kill, getpid(), 9);
+        //int ret = (int) api.call(kill, getpid(), 9);
+
+        sendTcp("/org/bdj/external/ps5_killdiscplayer.elf", 9021);
+
+        //return ret;
     }
     
     private static int cpusetSetAffinity(int core) {
@@ -1365,18 +1370,24 @@ public class Poops {
                 return false;
             }
 
-            // Status.println("Sending '" + payloadPath + "' to 127.0.0.1:XXXX...", false);
+            Status.println("Sending '" + payloadPath + "' to 127.0.0.1:XXXX...", false);
             elfldrSocket = new Socket();
             elfldrSocket.connect(new InetSocketAddress("127.0.0.1", ldrPort), 500);
             socketOutput = elfldrSocket.getOutputStream();
+            Status.println("Socket connected");
 
             byte[] buffer = new byte[4096];
             int bytesRead = 0;
+            int total = 0;
+
             while ((bytesRead = elfInput.read(buffer)) != -1) {
                 socketOutput.write(buffer, 0, bytesRead);
+                total += bytesRead;
             }
+
+            Status.println("wrote total " + total);
             socketOutput.flush();
-            // Status.println("'" + payloadPath + "' sent to 127.0.0.1:XXXX.", false);
+            Status.println("'" + payloadPath + "' sent to 127.0.0.1:XXXX.", false);
             return true;
         } catch (IOException e) {
             Status.printStackTrace("Failed to send '" + payloadPath + "'", e);
