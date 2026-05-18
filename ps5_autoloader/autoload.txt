@@ -1,6 +1,6 @@
 !5000
-ftpsrv-ps5-0.19.elf
+ftpsrv-ps5-0.20.elf
 !1000
-shadowmountplus-1.6beta9.elf
+shadowmountplus-1.6test11.elf
 !3000
 kstuff-lite-1.04.elf

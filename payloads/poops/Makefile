@@ -27,4 +27,4 @@ $(JAR_NAME): $(SOURCES) manifest.txt
 	cp -f $(JAR_NAME) $(MAKEFILE_DIR)/../../payload.jar
 
 clean:
-	rm -f src/org/bdj/external/*.class $(JAR_NAME)
+	rm -rf build src/org/bdj/external/*.class $(JAR_NAME)

