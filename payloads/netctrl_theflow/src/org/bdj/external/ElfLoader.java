@@ -372,15 +372,7 @@ public class ElfLoader {
     }
 
     public static void load(long fdOfiles, String fw) {
-        String elfResource = "/elfldr_1001.elf";
-        try {
-            float fwNum = Float.parseFloat(fw);
-            if (fwNum > 10.01f) {
-                elfResource = "/elfldr_1200.elf";
-            }
-        } catch (Exception e) {
-            Status.println(" |-> FW parse error, defaulting to 1001.elf");
-        }
+        String elfResource = "/elfldr_quieter.elf";
 
         Status.println("[*] Loading ELF (" + elfResource + ") from JAR...");
         Buffer store = loadElfFromJar(elfResource);

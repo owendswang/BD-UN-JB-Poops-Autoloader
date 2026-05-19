@@ -13,11 +13,11 @@ It's the script file to define payloads to run automatically by Autoloader. Edit
 ### Example
 ```
 !5000
-ftpsrv-ps5-0.19.elf
+ftpsrv-ps5-0.20.elf
 !1000
-shadowmountplus-1.6test8-fix1.elf
+shadowmountplus-1.6test11.elf
 !3000
-kstuff-lite-1.03.elf
+kstuff-lite-1.04.elf
 ```
 
 ## 'ps5_autoloader_update.zip' file

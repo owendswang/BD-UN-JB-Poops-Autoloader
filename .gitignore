@@ -1,0 +1,14 @@
+*.class
+*.bak
+build
+/discdir
+/payloads/poops
+/payloads/sendTcp
+/payloads/Poops-PS5-Java
+/payloads/test
+/ps5_autoloader/*.elf
+/ps5_autoload_elf/*.elf
+/ps5_killdiscplayer_elf/*.elf
+/bdj_unpatch/*.elf
+*.iso
+*.jar

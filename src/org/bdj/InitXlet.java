@@ -14,10 +14,13 @@ import org.havi.ui.HSceneFactory;
 import org.bdj.sandbox.Exploit;
 import org.bdj.sandbox.ExploitInternal;
 import org.bdj.api.NativeInvoke;
+import org.bdj.sandbox.Misc;
 
 public class InitXlet implements Xlet {
     private HScene scene;
     private Screen screen;
+    private RemoteJarLoader remoteJarLoader;
+    private Thread remoteJarLoaderThread;
     private InternalJarLoader internalJarLoader;
     private Thread internalJarLoaderThread;
     private final String jarLoaderThreadName = "JarLoader";
@@ -54,15 +57,29 @@ public class InitXlet implements Xlet {
         if (System.getSecurityManager() == null) {
             // Status.setNetworkLoggerEnabled(true);
             Status.println("Exploit success - sandbox escape achieved");
-            Status.println("Starting Poopsloit in 3 seconds...");
-            try { Thread.sleep(3000); } catch (Exception e) {}
 
-            try {
-                internalJarLoader = new InternalJarLoader();
-                internalJarLoaderThread = new Thread(internalJarLoader, jarLoaderThreadName);
-                internalJarLoaderThread.start();
-            } catch (Throwable e) {
-                Status.printStackTrace("Loader startup failed", e);
+            if (Misc.isJailbroken()) {
+                Status.println("Already jailbroken. Starting remote jar loader...");
+                NativeInvoke.sendNotificationRequest("Already jailbroken");
+
+                try {
+                    remoteJarLoader = new RemoteJarLoader();
+                    remoteJarLoaderThread = new Thread(remoteJarLoader, jarLoaderThreadName);
+                    remoteJarLoaderThread.start();
+                } catch (Throwable e) {
+                    Status.printStackTrace("Loader startup failed", e);
+                }
+            } else {
+                Status.println("Starting Poopsloit in 3 seconds...");
+                try { Thread.sleep(3000); } catch (Exception e) {}
+
+                try {
+                    internalJarLoader = new InternalJarLoader();
+                    internalJarLoaderThread = new Thread(internalJarLoader, jarLoaderThreadName);
+                    internalJarLoaderThread.start();
+                } catch (Throwable e) {
+                    Status.printStackTrace("Loader startup failed", e);
+                }
             }
         } else {
             Status.println("Exploit failed - sandbox still active");
