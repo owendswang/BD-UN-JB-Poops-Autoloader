@@ -5,4 +5,4 @@ It reads from `/data/ps5_autoloader`, then `/mnt/USB?/ps5_autoloader`, then `/mn
 
 ## Building
 
-Built with '[ps5-payload-dev/pacbrew-repo](https://github.com/ps5-payload-dev/pacbrew-repo)'. (You might need to rebuild it by the source code of it. Because current release v0.32 is not built with the latest SDK which supports upto FW 12.00. Go check the 'Actions' section of it for detailed building procedure.)
+Built with '[ps5-payload-dev/sdk](https://github.com/ps5-payload-dev/dk)'.
