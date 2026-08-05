@@ -94,6 +94,7 @@ public class Poops {
     private static long pipe;
     private static long kqueue;
     private static long socket;
+    private static long connect;
     private static long socketpair;
     private static long recvmsg;
     private static long getsockopt;
@@ -228,6 +229,7 @@ public class Poops {
         pipe = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "pipe");
         kqueue = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "kqueue");
         socket = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "socket");
+        connect = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "connect");
         socketpair = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "socketpair");
         recvmsg = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "recvmsg");
         getsockopt = api.dlsym(API.LIBKERNEL_MODULE_HANDLE, "getsockopt");
@@ -255,6 +257,7 @@ public class Poops {
                 || pipe == 0
                 || kqueue == 0
                 || socket == 0
+                || connect == 0
                 || socketpair == 0
                 || recvmsg == 0
                 || getsockopt == 0
@@ -353,6 +356,10 @@ public class Poops {
     private static long write(int fd, Buffer buf, long nbytes) {
         return api.call(write, fd, buf != null ? buf.address() : 0, nbytes);
     }
+
+    private static long write(int fd, long address, long nbytes) {
+        return api.call(write, fd, address, nbytes);
+    }
     
     private static long writev(int fd, Buffer iov, int iovcnt) {
         return api.call(writev, fd, iov != null ? iov.address() : 0, iovcnt);
@@ -372,6 +379,10 @@ public class Poops {
     
     private static int socket(int domain, int type, int protocol) {
         return (int) api.call(socket, domain, type, protocol);
+    }
+
+    private static int connect(int fd, Buffer sockaddr, int socklen) {
+        return (int) api.call(connect, fd, sockaddr != null ? sockaddr.address() : 0, socklen);
     }
     
     private static int socketpair(int domain, int type, int protocol, Int32Array sv) {
@@ -425,6 +436,19 @@ public class Poops {
 
     private static long __sys_randomized_path(int fd, Buffer pathBuf, Int64 lenPtr) {
         return api.call(__sys_randomized_path, fd, pathBuf.address(), lenPtr.address());
+    }
+
+    private static void kill_bdj() {
+        Status.println("Trying to close disc player");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) { }
+        
+        //int ret = (int) api.call(kill, getpid(), 9);
+
+        sendTcp("/org/bdj/external/ps5_killdiscplayer.elf", 9021);
+
+        //return ret;
     }
 
     private static int cpusetSetAffinity(int core) {
@@ -734,7 +758,6 @@ public class Poops {
             __sys_netcontrol(1, NET_CONTROL_NETEVENT_CLEAR_QUEUE, clearBuf, clearBuf.size());
             
         }
-
         
         // Set cr_refcnt back to 1.
         for (int i = 0; i < 32; i++) {
@@ -1345,7 +1368,107 @@ public class Poops {
         return true;
     }
 
-    
+    public static boolean sendTcp(String payloadPath, int ldrPort) {
+        InputStream elfInput = null;
+        int sockFd = -1;
+
+        try {
+            elfInput = AioShellcode.class.getResourceAsStream(payloadPath);
+            if (elfInput == null) {
+                Status.println("'" + payloadPath + "' not found in payload.jar.");
+                return false;
+            }
+
+            // Status.println("Sending '" + payloadPath + "' to 127.0.0.1:" + ldrPort + "...");
+
+            sockFd = socket(AF_INET, SOCK_STREAM, 0);
+            if (sockFd == -1) {
+                Status.println("socket() failed");
+                return false;
+            }
+
+            Buffer sockaddrIn = new Buffer(16);
+            sockaddrIn.putByte(0x00, (byte) 16);
+            sockaddrIn.putByte(0x01, (byte) AF_INET);
+            sockaddrIn.putShort(0x02, htons(ldrPort));
+            sockaddrIn.putInt(0x04, aton("127.0.0.1"));
+
+            if (connect(sockFd, sockaddrIn, 16) == -1) {
+                Status.println("connect() failed");
+                return false;
+            }
+            Status.println("Socket connected");
+
+            byte[] buffer = new byte[4096];
+            Buffer nativeBuffer = new Buffer(buffer.length);
+            int bytesRead = 0;
+            int total = 0;
+
+            while ((bytesRead = elfInput.read(buffer)) != -1) {
+                nativeBuffer.put(0, buffer);
+
+                int written = 0;
+                while (written < bytesRead) {
+                    long ret = write(sockFd, nativeBuffer.address() + written, bytesRead - written);
+                    if (ret <= 0) {
+                        Status.println("write() failed");
+                        return false;
+                    }
+                    written += (int) ret;
+                }
+                total += bytesRead;
+            }
+
+            Status.println("wrote total " + total);
+            // Status.println("'" + payloadPath + "' sent to 127.0.0.1:" + ldrPort + ".");
+            return true;
+        } catch (IOException e) {
+            Status.printStackTrace("Failed to send '" + payloadPath + "'", e);
+            return false;
+        } finally {
+            if (sockFd != -1) {
+                close(sockFd);
+            }
+            if (elfInput != null) {
+                try {
+                    elfInput.close();
+                } catch (IOException e) {}
+            }
+        }
+    }
+
+    private static short htons(int port) {
+        return (short) (((port & 0x00FF) << 8) | ((port & 0xFF00) >>> 8));
+    }
+
+    private static int aton(String ip) {
+        int i0 = ip.indexOf('.');
+        int i1 = ip.indexOf('.', i0 + 1);
+        int i2 = ip.indexOf('.', i1 + 1);
+        int a = Integer.parseInt(ip.substring(0, i0));
+        int b = Integer.parseInt(ip.substring(i0 + 1, i1));
+        int c = Integer.parseInt(ip.substring(i1 + 1, i2));
+        int d = Integer.parseInt(ip.substring(i2 + 1));
+        return (d << 24) | (c << 16) | (b << 8) | a;
+    }
+
+    private static void BinHenloader() {
+        Status.println("Wait for binloader to start...");
+        BinLoader.start();
+        try { Thread.sleep(4000); } catch(Exception e) {}
+
+        Status.println("PS4 henloader starting...");
+        sendTcp("/org/bdj/external/aiofix_USBpayload.elf", 9020);
+    }
+
+    private static void ElfAutoloader() {
+        Status.println("Wait for elfldr to start...");
+        try { Thread.sleep(4000); } catch(Exception e) {}
+
+        Status.println("PS5 autoloader starting...");
+        sendTcp("/org/bdj/external/ps5_autoload.elf", 9021);
+    }
+
     public static void main(String[] args) {
         Status.setNetworkLoggerEnabled(false);
         
@@ -1434,7 +1557,7 @@ public class Poops {
             
             cleanup();
             
-            BinLoader.start();
+            BinHenloader();
             
         } else if (PLATFORM.equals("PS5")) {
 
@@ -1448,6 +1571,11 @@ public class Poops {
             
             cleanup();
             
+            ElfAutoloader();
+
+            // This is temp fix
+            // kill bdj.elf otherwise BD-J crashes when closing app
+            kill_bdj();
         } else {
             cleanup();
         }

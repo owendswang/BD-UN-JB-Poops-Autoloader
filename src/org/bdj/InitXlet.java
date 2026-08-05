@@ -20,7 +20,7 @@ public class InitXlet implements Xlet {
     private final String jarLoaderThreadName = "JarLoader";
     
     private final String versionString = "BD-JB5 2.0 by Gezine";
-    private final boolean UseInternalJar = false;
+    private final boolean UseInternalJar = true;
     
     public void initXlet(XletContext context) {
         
@@ -65,6 +65,9 @@ public class InitXlet implements Xlet {
                     Status.printStackTrace("Loader startup failed", e);
                 }
             } else {
+                Status.println("Starting Poopsloit in 3 seconds...");
+                try { Thread.sleep(3000); } catch (Exception e) {}
+
                 try {
                     internalJarLoader = new InternalJarLoader();
                     internalJarLoaderThread = new Thread(internalJarLoader, jarLoaderThreadName);

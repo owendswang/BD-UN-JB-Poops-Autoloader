@@ -15,7 +15,7 @@
 # <http://www.gnu.org/licenses/>.
 
 
-DISC_LABEL := BD-JB5-2.0
+DISC_LABEL := BD-JB5-2.0-Poops-Autoloader
 
 #
 # Host tools
@@ -58,7 +58,9 @@ discdir:
 
 discdir/BDMV/JAR/00000.jar: discdir $(SOURCES)
 	$(JAVAC) $(JFLAGS) -cp $(CLASSPATH) $(SOURCES)
-	$(JAR) cf $@ -C src/ .
+	mkdir -p build
+	rsync -a --exclude='*.java' --exclude='*.c' --exclude='*.bak' src/ build/
+	$(JAR) cf $@ -C build/ .
 	$(BDSIGNER) -keystore $(BDJSDK_HOME)/resources/sig.ks $@
 
 discdir/%: discdir
@@ -68,8 +70,9 @@ discdir/%: discdir
 $(DISC_LABEL).iso: $(DISC_FILES)
 	cp -r BDMV/META discdir/BDMV/
 	cp -r BDMV/BDJO discdir/BDMV/
+	cp payload.jar discdir/
 	$(JAR) cfM discdir/BDMV/JAR/00001.jar -C 00001 .
 	$(MAKEFS) -m 16m -t udf -o T=bdre,v=2.50,L=$(DISC_LABEL) $@ discdir
 
 clean:
-	rm -rf META-INF $(DISC_LABEL).iso discdir src/jdk/internal/misc/*.class src/org/bdj/*.class src/org/bdj/sandbox/*.class src/org/bdj/api/*.class
+	rm -rf build META-INF $(DISC_LABEL).iso discdir src/jdk/internal/misc/*.class src/org/bdj/*.class src/org/bdj/sandbox/*.class src/org/bdj/api/*.class

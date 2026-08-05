@@ -19,7 +19,12 @@ all: $(JAR_NAME)
 # Create JAR with manifest
 $(JAR_NAME): $(SOURCES) manifest.txt
 	$(JAVAC) $(JFLAGS) -cp $(CLASSPATH) $(SOURCES)
-	$(JAR) cfm $@ manifest.txt -C src/ .
+	mkdir -p build
+	rsync -a --exclude='*.java' --exclude='*.bak' src/ $(MAKEFILE_DIR)/build/
+	rsync -a $(MAKEFILE_DIR)/../../ps5_autoload_elf/ps5_autoload.elf $(MAKEFILE_DIR)/build/org/bdj/external/ps5_autoload.elf
+	rsync -a $(MAKEFILE_DIR)/../../ps5_killdiscplayer_elf/ps5_killdiscplayer.elf $(MAKEFILE_DIR)/build/org/bdj/external/ps5_killdiscplayer.elf
+	$(JAR) cfm $@ manifest.txt -C $(MAKEFILE_DIR)/build/ .
+	cp -f $(JAR_NAME) $(MAKEFILE_DIR)/../../payload.jar
 
 clean:
-	rm -f src/org/bdj/api/*.class src/org/bdj/*.class src/org/bdj/external/*.class $(JAR_NAME)
+	rm -rf build src/org/bdj/api/*.class src/org/bdj/*.class src/org/bdj/external/*.class $(JAR_NAME)
