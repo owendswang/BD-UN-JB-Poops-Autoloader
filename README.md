@@ -21,6 +21,10 @@ if you got stuck at `triple free` or the `failed and reboot` notification showed
 
 \>\>[Setup Guide](./ps5_autoloader)<<
 
+### Restore bdj_unpatch
+
+`restore_bdj_unpatch` restores the original `bdjstack.jar` from the `.bak` file created by `bdj_unpatch`, replacing the patched JAR without repacking it.
+
 ### Build
 
 Use john-tornblom's **[bdj-sdk](https://github.com/john-tornblom/bdj-sdk/)** and **[ps5-payload-sdk](https://github.com/ps5-payload-dev/sdk/)** for compiling.  
